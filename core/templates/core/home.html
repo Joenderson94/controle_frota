@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Frota - Dashboard</title>
+    <!-- CSS simples para deixar o visual agradável -->
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
+        h1, h2 { color: #333; }
+        .card-container { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 200px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <span>Olá, <strong>{{ user.username }}</strong>! 👋</span>
+        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: #dc3545; cursor: pointer; font-weight: bold;">Sair</button>
+        </form>
+    </div>
+    <h1>🚗 Painel do Controle de Frota</h1>
+    <a href="{% url 'solicitar_veiculo' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; display: inline-block; margin-bottom: 20px;">
+    + Nova Solicitação
+</a>
+    <hr>
+
+    <h2>Veículos Cadastrados</h2>
+    <div class="card-container">
+        {% for veiculo in veiculos %}
+            <div class="card">
+                <h3>{{ veiculo.modelo }}</h3>
+                <p><strong>Marca:</strong> {{ veiculo.marca }}</p>
+                <p><strong>Placa:</strong> {{ veiculo.placa }}</p>
+                <p><strong>Ano:</strong> {{ veiculo.ano }}</p>
+            </div>
+        {% empty %}
+            <p>Nenhum veículo cadastrado ainda.</p>
+        {% endfor %}
+    </div>
+
+    <h2>Últimas Solicitações de Uso</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Motorista</th>
+                <th>Veículo</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th> <!-- Coluna Nova -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in solicitacoes %}
+                <tr>
+                    <td>{{ registro.motorista.username }}</td>
+                    <td>{{ registro.veiculo.modelo }} ({{ registro.veiculo.placa }})</td>
+                    <td>{{ registro.get_status_display }}</td>
+                    <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if registro.status != 'CONCLUIDO' %}
+                            <a href="{% url 'devolver_veiculo' registro.id %}" style="background-color: #28a745; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 13px;">
+                                Devolver
+                            </a>
+                        {% else %}
+                            <span style="color: #6c757d;">
+                                {{ registro.km_final }} km (Finalizado)
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">Nenhuma solicitação registrada.</td> <!-- Atualizado para 5 colunas -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
+</body>
+</html>

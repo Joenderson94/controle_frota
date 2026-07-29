@@ -1,0 +1,16 @@
+Plaintext
+# Ambiente Virtual (NÃO SUBIR)
+venv/
+env/
+.venv/
+
+# Arquivos de Cache e Python (NÃO SUBIR)
+__pycache__/
+*.py[cod]
+
+# Banco de dados local (Opcional - em produção/empresas não se sobe o SQLite)
+*.sqlite3
+
+# Arquivos do Editor / IDE
+.vscode/
+.idea/

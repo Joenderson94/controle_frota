@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devolver Veículo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
+        .form-container { background: white; padding: 25px; border-radius: 8px; max-width: 500px; margin: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-control { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #c82333; }
+        a { color: #007bff; text-decoration: none; display: inline-block; margin-top: 15px; }
+        .info-box { background-color: #e9ecef; padding: 12px; border-radius: 4px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>🏁 Finalizar Uso do Veículo</h2>
+        
+        <div class="info-box">
+            <p><strong>Veículo:</strong> {{ solicitacao.veiculo.modelo }} ({{ solicitacao.veiculo.placa }})</p>
+            <p><strong>KM Inicial:</strong> {{ solicitacao.km_inicial }} km</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.km_final.errors %}
+                <div style="color: red; margin-bottom: 10px;">
+                    {{ form.km_final.errors.0 }}
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>KM Final (devolução):</label>
+                {{ form.km_final }}
+            </div>
+
+            <div class="form-group">
+                <label>Observações finais / Avarias:</label>
+                {{ form.observacoes }}
+            </div>
+
+            <button type="submit">Concluir Viagem e Devolver</button>
+        </form>
+
+        <a href="{% url 'home' %}">← Voltar para o Dashboard</a>
+    </div>
+
+</body>
+</html>
