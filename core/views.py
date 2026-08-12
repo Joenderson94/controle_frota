@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required # Importação necessária
+from django.contrib.auth.decorators import login_required  # Importação necessária
 from .models import Veiculo, RegistroUso
 from .forms import SolicitarVeiculoForm, FinalizarUsoForm
 
@@ -15,6 +15,7 @@ def home(request):
     }
     return render(request, 'core/home.html', contexto)
 
+
 @login_required
 def solicitar_veiculo(request):
     if request.method == 'POST':
@@ -25,9 +26,13 @@ def solicitar_veiculo(request):
             if request.user.is_authenticated:
                 solicitacao.motorista = request.user
             else:
-                # Caso temporário para testes enquanto não configuramos o login
                 from django.contrib.auth.models import User
                 solicitacao.motorista = User.objects.first()
+
+            # Marca o veículo como indisponível
+            veiculo = solicitacao.veiculo
+            veiculo.disponivel = False
+            veiculo.save()
 
             solicitacao.save()
             return redirect('home')
@@ -35,6 +40,7 @@ def solicitar_veiculo(request):
         form = SolicitarVeiculoForm()
 
     return render(request, 'core/solicitar_veiculo.html', {'form': form})
+
 
 @login_required
 def devolver_veiculo(request, pk):
@@ -46,6 +52,12 @@ def devolver_veiculo(request, pk):
         if form.is_valid():
             registro = form.save(commit=False)
             registro.status = 'CONCLUIDO'  # Marca como concluído automaticamente
+
+            # Libera o veículo novamente
+            veiculo = registro.veiculo
+            veiculo.disponivel = True
+            veiculo.save()
+
             registro.save()
             return redirect('home')
     else:
