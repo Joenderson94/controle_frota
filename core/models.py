@@ -9,6 +9,7 @@ class Veiculo(models.Model):
     modelo = models.CharField(max_length=50)
     marca = models.CharField(max_length=30)
     ano = models.IntegerField()
+    disponivel = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.modelo} ({self.placa})"
